@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Breath - Interactive Particle Art</title>
+    <link rel="stylesheet" href="styles-hand.css">
+</head>
+<body>
+    <div id="container">
+        <!-- Camera Feed (background) -->
+        <video id="camera-feed" autoplay playsinline></video>
+        
+        <!-- Three.js Canvas -->
+        <canvas id="canvas"></canvas>
+        
+        <!-- UI Overlay -->
+        <div id="ui-overlay">
+            <!-- Instructions -->
+            <div id="instructions" class="instruction-panel">
+                <div class="instruction-title">Show Your Hand</div>
+                <div class="instruction-text">Move closer to zoom in</div>
+                <div class="instruction-text">Move away to zoom out</div>
+                <div class="instruction-text">Rotate your wrist to spin</div>
+            </div>
+
+            <!-- Hand Status -->
+            <div id="hand-status">
+                <div class="status-dot"></div>
+                <span class="status-text">Initializing camera...</span>
+            </div>
+
+            <!-- Controls -->
+            <div id="controls">
+                <button id="toggle-camera-feed" class="control-btn">
+                    <span class="btn-text">Hide Camera</span>
+                </button>
+                
+                <button id="toggle-skeleton" class="control-btn">
+                    <span class="btn-text">Show Skeleton</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">Initializing hand tracking...</div>
+                <div class="loading-subtext">Camera permission required</div>
+            </div>
+        </div>
+
+        <!-- Hand Skeleton Canvas (overlay) -->
+        <canvas id="skeleton-canvas"></canvas>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script type="module" src="app-hand.js"></script>
+</body>
+</html>

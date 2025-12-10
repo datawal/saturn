@@ -1,0 +1,324 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+:root {
+    --color-primary: #ff9f40;
+    --color-secondary: #fff5e1;
+    --color-accent: #1a1f3a;
+    --color-bg: #0a0e1a;
+    --color-text: #ffffff;
+    --color-text-dim: #8892b0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Space Mono', monospace;
+    background: var(--color-bg);
+    color: var(--color-text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+#container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Camera Feed (background) */
+#camera-feed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.15;
+    filter: blur(8px) brightness(0.4);
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+#camera-feed.hidden {
+    opacity: 0;
+}
+
+/* Three.js Canvas */
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+/* Skeleton Canvas (overlay) */
+#skeleton-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#skeleton-canvas.visible {
+    opacity: 1;
+}
+
+/* UI Overlay */
+#ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#ui-overlay > * {
+    pointer-events: auto;
+}
+
+/* Instructions Panel */
+.instruction-panel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(10, 14, 26, 0.9);
+    border: 2px solid var(--color-primary);
+    border-radius: 12px;
+    padding: 32px 48px;
+    backdrop-filter: blur(20px);
+    animation: fadeIn 0.5s ease-out, pulse 2s ease-in-out infinite;
+}
+
+.instruction-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    text-shadow: 0 0 20px rgba(255, 159, 64, 0.5);
+}
+
+.instruction-text {
+    font-size: 14px;
+    color: var(--color-text-dim);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.instruction-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.9);
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        border-color: var(--color-primary);
+        box-shadow: 0 0 20px rgba(255, 159, 64, 0.3);
+    }
+    50% { 
+        border-color: var(--color-secondary);
+        box-shadow: 0 0 40px rgba(255, 159, 64, 0.5);
+    }
+}
+
+/* Hand Status */
+#hand-status {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--color-text-dim);
+    background: rgba(10, 14, 26, 0.8);
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-text-dim);
+    transition: all 0.3s ease;
+}
+
+.status-dot.active {
+    background: var(--color-primary);
+    box-shadow: 0 0 15px var(--color-primary);
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* Controls */
+#controls {
+    position: absolute;
+    bottom: 32px;
+    left: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 1s ease-out 1s both;
+}
+
+.control-btn {
+    padding: 12px 20px;
+    background: rgba(10, 14, 26, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+}
+
+.control-btn:hover {
+    background: rgba(10, 14, 26, 0.95);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(255, 159, 64, 0.2);
+}
+
+.control-btn:active {
+    transform: translateY(0);
+}
+
+.control-btn.active {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 24px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 8px;
+}
+
+.loading-subtext {
+    font-size: 13px;
+    color: var(--color-text-dim);
+    letter-spacing: 0.5px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .instruction-panel {
+        padding: 24px 32px;
+        max-width: 90%;
+    }
+    
+    .instruction-title {
+        font-size: 24px;
+    }
+    
+    .instruction-text {
+        font-size: 12px;
+    }
+    
+    #hand-status {
+        top: 16px;
+        right: 16px;
+        padding: 10px 16px;
+        font-size: 11px;
+    }
+    
+    #controls {
+        bottom: 16px;
+        left: 16px;
+    }
+    
+    .control-btn {
+        padding: 10px 16px;
+        font-size: 10px;
+    }
+}
+
+/* Smooth transitions for hand states */
+.hand-detected #instructions {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
